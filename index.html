@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ReactQuest - Learn React Like Grid Garden</title>
+    <title>ReactQuest 🎯 - Learn React Like Grid Garden</title>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -21,13 +21,13 @@
             color: #333;
         }
 
-        .container {
+        .game-container {
             display: flex;
             height: 100vh;
         }
 
         .sidebar {
-            width: 400px;
+            width: 350px;
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             padding: 20px;
@@ -35,19 +35,20 @@
             box-shadow: 2px 0 10px rgba(0,0,0,0.1);
         }
 
-        .main-content {
+        .main-game-area {
             flex: 1;
             display: flex;
             flex-direction: column;
             padding: 20px;
+            gap: 20px;
         }
 
         .level-header {
             background: rgba(255, 255, 255, 0.9);
             padding: 15px 20px;
             border-radius: 10px;
-            margin-bottom: 20px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
         }
 
         .level-selector {
@@ -65,7 +66,8 @@
             background: rgba(255,255,255,0.7);
             cursor: pointer;
             font-weight: bold;
-            transition: all 0.2s;
+            transition: all 0.3s;
+            position: relative;
         }
 
         .level-btn:hover {
@@ -76,6 +78,7 @@
         .level-btn.current {
             background: #4CAF50;
             color: white;
+            box-shadow: 0 0 15px rgba(76, 175, 80, 0.5);
         }
 
         .level-btn.completed {
@@ -83,26 +86,80 @@
             color: white;
         }
 
-        .challenge-area {
+        .level-btn.completed::after {
+            content: '✓';
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #4CAF50;
+            color: white;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .game-board {
             background: rgba(255, 255, 255, 0.9);
-            border-radius: 10px;
-            padding: 20px;
+            border-radius: 15px;
+            padding: 30px;
             flex: 1;
             display: flex;
-            gap: 20px;
+            gap: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
         }
 
         .code-section {
             flex: 1;
+            display: flex;
+            flex-direction: column;
         }
 
-        .preview-section {
+        .visual-section {
             flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .browser-window {
             background: #f8f9fa;
-            border-radius: 8px;
-            padding: 15px;
-            border: 2px dashed #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 3px solid #ddd;
+            flex: 1;
             position: relative;
+        }
+
+        .browser-header {
+            background: #e9ecef;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .browser-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot-red { background: #ff5f56; }
+        .dot-yellow { background: #ffbd2e; }
+        .dot-green { background: #27ca3f; }
+
+        .browser-content {
+            padding: 20px;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: white;
         }
 
         .code-input {
@@ -115,104 +172,244 @@
             border-radius: 8px;
             resize: vertical;
             background: #fafafa;
+            transition: all 0.3s;
         }
 
         .code-input:focus {
             outline: none;
             border-color: #4CAF50;
             background: white;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.2);
         }
 
         .btn {
             background: #4CAF50;
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 12px 24px;
             border-radius: 6px;
             cursor: pointer;
             font-size: 14px;
+            font-weight: bold;
             margin-top: 10px;
-            transition: background 0.2s;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .btn:hover {
             background: #45a049;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
         }
 
         .success {
-            background: #d4edda;
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
             color: #155724;
-            padding: 10px;
-            border-radius: 6px;
-            margin-top: 10px;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
             border: 1px solid #c3e6cb;
+            animation: successPulse 0.6s ease-in-out;
         }
 
         .error {
-            background: #f8d7da;
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
             color: #721c24;
-            padding: 10px;
-            border-radius: 6px;
-            margin-top: 10px;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
             border: 1px solid #f5c6cb;
+            animation: errorShake 0.5s ease-in-out;
         }
 
-        .hint-box {
-            background: #fff3cd;
+        @keyframes successPulse {
+            0% { transform: scale(0.95); opacity: 0; }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes errorShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .tutorial-box {
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
             color: #856404;
-            padding: 10px;
-            border-radius: 6px;
-            margin-top: 10px;
-            border: 1px solid #ffeaa7;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 2px solid #ffeaa7;
+            position: relative;
+        }
+
+        .tutorial-box::before {
+            content: '💡';
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            background: #fff3cd;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 18px;
         }
 
         h1 {
             color: #4CAF50;
             margin-bottom: 20px;
             text-align: center;
+            font-size: 24px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
         }
 
         h2 {
             color: #333;
             margin-bottom: 15px;
+            font-size: 20px;
         }
 
         h3 {
             color: #555;
             margin-bottom: 10px;
+            font-size: 16px;
         }
 
         .objective {
-            background: #e3f2fd;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            border-left: 4px solid #2196F3;
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 5px solid #2196F3;
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.2);
         }
 
-        .react-component {
-            border: 2px solid #4CAF50;
-            border-radius: 8px;
+        .target-component {
+            border: 3px dashed #4CAF50;
+            border-radius: 10px;
             padding: 20px;
-            background: white;
-            min-height: 100px;
+            background: rgba(76, 175, 80, 0.1);
+            min-height: 80px;
             display: flex;
             align-items: center;
             justify-content: center;
+            margin: 20px 0;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .target-component.success {
+            border-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.2);
+            animation: successGlow 1s ease-in-out;
+        }
+
+        @keyframes successGlow {
+            0%, 100% { box-shadow: 0 0 5px rgba(76, 175, 80, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(76, 175, 80, 0.6); }
+        }
+
+        .target-component::before {
+            content: 'Target Result';
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            background: white;
+            color: #4CAF50;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .next-btn {
-            background: #2196F3;
+            background: linear-gradient(135deg, #2196F3, #1976D2);
             margin-left: 10px;
+            animation: pulse 2s infinite;
         }
 
         .next-btn:hover {
-            background: #1976D2;
+            background: linear-gradient(135deg, #1976D2, #1565C0);
         }
 
-        .instructions {
-            line-height: 1.6;
-            margin-bottom: 15px;
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #45a049);
+            border-radius: 4px;
+            transition: width 0.5s ease-in-out;
+        }
+
+        .xp-display {
+            text-align: center;
+            font-weight: bold;
+            color: #4CAF50;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .game-element {
+            transition: all 0.3s ease-in-out;
+        }
+
+        .bounce-in {
+            animation: bounceIn 0.6s ease-in-out;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .example-code {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            margin: 10px 0;
+            color: #495057;
+        }
+
+        .visual-demo {
+            background: white;
+            border: 2px solid #4CAF50;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            text-align: center;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .visual-demo.animated {
+            animation: demoGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes demoGlow {
+            0%, 100% { box-shadow: 0 0 5px rgba(76, 175, 80, 0.3); }
+            50% { box-shadow: 0 0 15px rgba(76, 175, 80, 0.6); }
         }
     </style>
 </head>
@@ -222,98 +419,123 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
 
-        // Level data similar to Grid Garden structure
+        // Enhanced level data with visual tutorials and examples
         const levels = [
             {
                 id: 1,
-                title: "Hello React!",
-                objective: "Create your first React element that displays 'Hello ReactQuest!'",
-                instructions: "Use React.createElement to create an h1 element with the text 'Hello ReactQuest!'",
-                startingCode: "// Write your React element here\nReact.createElement(___)",
-                solution: "React.createElement('h1', null, 'Hello ReactQuest!')",
-                hint: "React.createElement takes three parameters: element type, props, and children",
-                testFn: (code) => {
-                    try {
-                        const element = eval(code);
-                        return element?.type === 'h1' && 
-                               element?.props?.children === 'Hello ReactQuest!';
-                    } catch {
-                        return false;
-                    }
-                }
+                title: "Welcome to React! 👋",
+                objective: "Create your first React element that says 'Hello ReactQuest!'",
+                tutorial: "React elements are the building blocks of React apps. Watch how we create one:",
+                exampleCode: `React.createElement('h1', null, 'Hello ReactQuest!')`,
+                exampleResult: "Hello ReactQuest!",
+                instructions: "Now you try! Fill in the blanks to create an h1 element:",
+                startingCode: `React.createElement(___, null, ___)`,
+                placeholder: "Fill in: element type and text content",
+                solution: `React.createElement('h1', null, 'Hello ReactQuest!')`,
+                hint: "First parameter: 'h1' (the HTML tag), Third parameter: 'Hello ReactQuest!' (the text)",
+                targetElement: "h1",
+                targetText: "Hello ReactQuest!",
+                points: 100
             },
             {
                 id: 2,
-                title: "JSX Basics",
-                objective: "Convert React.createElement to JSX syntax",
-                instructions: "Write the same h1 element using JSX instead of React.createElement",
-                startingCode: "// Write JSX here\n<___ ___>Hello ReactQuest!</___>",
-                solution: "<h1>Hello ReactQuest!</h1>",
-                hint: "JSX looks like HTML but it's actually JavaScript. Use angle brackets!",
-                testFn: (code) => {
-                    try {
-                        // For JSX, we'll check the string pattern
-                        return code.includes('<h1>') && 
-                               code.includes('Hello ReactQuest!') && 
-                               code.includes('</h1>');
-                    } catch {
-                        return false;
-                    }
-                }
+                title: "JSX Magic ✨",
+                objective: "Convert React.createElement to beautiful JSX syntax",
+                tutorial: "JSX makes React code look like HTML! See the transformation:",
+                exampleCode: `<h1>Hello ReactQuest!</h1>`,
+                exampleResult: "Hello ReactQuest!",
+                instructions: "Much cleaner, right? Now write the same thing using JSX:",
+                startingCode: `<___>Hello ReactQuest!</___>`,
+                placeholder: "Use JSX syntax with angle brackets",
+                solution: `<h1>Hello ReactQuest!</h1>`,
+                hint: "JSX uses HTML-like syntax: <tagName>content</tagName>",
+                targetElement: "h1",
+                targetText: "Hello ReactQuest!",
+                points: 150
             },
             {
                 id: 3,
-                title: "Props Introduction",
-                objective: "Create a Welcome component that accepts a name prop",
-                instructions: "Create a function component that takes props and displays 'Welcome, {name}!'",
-                startingCode: "function Welcome(___) {\n  return <h1>Welcome, ___!</h1>\n}",
-                solution: "function Welcome(props) {\n  return <h1>Welcome, {props.name}!</h1>\n}",
-                hint: "Props are passed as the first parameter to function components. Access them with props.propertyName",
-                testFn: (code) => {
-                    try {
-                        return code.includes('props') && 
-                               code.includes('{props.name}') && 
-                               code.includes('Welcome,');
-                    } catch {
-                        return false;
-                    }
-                }
+                title: "Props Power! 🔥",
+                objective: "Create a Welcome component that greets different people",
+                tutorial: "Props let components be dynamic! Here's how:",
+                exampleCode: `function Welcome(props) {
+  return <h1>Welcome, {props.name}!</h1>
+}
+
+// Usage: <Welcome name="Alice" />`,
+                exampleResult: "Welcome, Alice!",
+                instructions: "Create a Welcome component that uses props.name:",
+                startingCode: `function Welcome(___) {
+  return <h1>Welcome, ___!</h1>
+}`,
+                placeholder: "Accept props and use props.name",
+                solution: `function Welcome(props) {
+  return <h1>Welcome, {props.name}!</h1>
+}`,
+                hint: "Function parameter should be 'props', and use {props.name} in the JSX",
+                targetElement: "function",
+                targetText: "Welcome, {props.name}!",
+                points: 200
             },
             {
                 id: 4,
-                title: "Destructuring Props",
-                objective: "Use destructuring to extract the name prop directly",
-                instructions: "Rewrite the Welcome component using destructuring in the parameter",
-                startingCode: "function Welcome(___) {\n  return <h1>Welcome, ___!</h1>\n}",
-                solution: "function Welcome({ name }) {\n  return <h1>Welcome, {name}!</h1>\n}",
-                hint: "You can destructure props directly: ({ name }) instead of (props)",
-                testFn: (code) => {
-                    try {
-                        return code.includes('{ name }') && 
-                               code.includes('{name}') && 
-                               !code.includes('props.name');
-                    } catch {
-                        return false;
-                    }
-                }
+                title: "Destructuring Delight! 🎯",
+                objective: "Make your props cleaner with destructuring",
+                tutorial: "Destructuring makes code cleaner and shorter:",
+                exampleCode: `function Welcome({ name }) {
+  return <h1>Welcome, {name}!</h1>
+}`,
+                exampleResult: "Welcome, Alice!",
+                instructions: "Rewrite using destructuring - no more 'props.name':",
+                startingCode: `function Welcome(___) {
+  return <h1>Welcome, ___!</h1>
+}`,
+                placeholder: "Use { name } destructuring",
+                solution: `function Welcome({ name }) {
+  return <h1>Welcome, {name}!</h1>
+}`,
+                hint: "Parameter: { name }, JSX: {name} (no 'props.' needed!)",
+                targetElement: "function",
+                targetText: "Welcome, {name}!",
+                points: 250
             },
             {
                 id: 5,
-                title: "Multiple Props",
-                objective: "Create a UserCard component with name and age props",
-                instructions: "Make a component that displays both name and age in a nice format",
-                startingCode: "function UserCard({ ___, ___ }) {\n  return (\n    <div>\n      <h2>___</h2>\n      <p>Age: ___</p>\n    </div>\n  )\n}",
-                solution: "function UserCard({ name, age }) {\n  return (\n    <div>\n      <h2>{name}</h2>\n      <p>Age: {age}</p>\n    </div>\n  )\n}",
-                hint: "Destructure multiple props separated by commas: { name, age }",
-                testFn: (code) => {
-                    try {
-                        return code.includes('{ name, age }') && 
-                               code.includes('{name}') && 
-                               code.includes('{age}');
-                    } catch {
-                        return false;
-                    }
-                }
+                title: "Multiple Props Master! 🏆",
+                objective: "Handle multiple props like a React pro",
+                tutorial: "Real components often need multiple props:",
+                exampleCode: `function UserCard({ name, age, city }) {
+  return (
+    <div>
+      <h2>{name}</h2>
+      <p>Age: {age}</p>
+      <p>City: {city}</p>
+    </div>
+  )
+}`,
+                exampleResult: "UserCard with name, age, and city",
+                instructions: "Create a UserCard with name and age props:",
+                startingCode: `function UserCard({ ___, ___ }) {
+  return (
+    <div>
+      <h2>___</h2>
+      <p>Age: ___</p>
+    </div>
+  )
+}`,
+                placeholder: "Destructure name and age, then use them",
+                solution: `function UserCard({ name, age }) {
+  return (
+    <div>
+      <h2>{name}</h2>
+      <p>Age: {age}</p>
+    </div>
+  )
+}`,
+                hint: "Destructure: { name, age }, Use: {name} and {age}",
+                targetElement: "function",
+                targetText: "UserCard component",
+                points: 300
             }
         ];
 
@@ -323,30 +545,61 @@
             const [feedback, setFeedback] = useState('');
             const [isCorrect, setIsCorrect] = useState(false);
             const [completedLevels, setCompletedLevels] = useState(new Set());
-            const [showHint, setShowHint] = useState(false);
+            const [showTutorial, setShowTutorial] = useState(true);
+            const [totalXP, setTotalXP] = useState(0);
+            const [showExample, setShowExample] = useState(true);
 
             const level = levels.find(l => l.id === currentLevel);
+            const progress = (completedLevels.size / levels.length) * 100;
 
             useEffect(() => {
                 setUserCode(level?.startingCode || '');
                 setFeedback('');
                 setIsCorrect(false);
-                setShowHint(false);
+                setShowTutorial(true);
+                setShowExample(true);
             }, [currentLevel]);
 
             const checkCode = () => {
                 try {
-                    const correct = level.testFn(userCode);
+                    let correct = false;
+                    
+                    // Enhanced testing logic
+                    if (level.id === 1) {
+                        correct = userCode.includes("React.createElement") && 
+                                 userCode.includes("'h1'") && 
+                                 userCode.includes("'Hello ReactQuest!'");
+                    } else if (level.id === 2) {
+                        correct = userCode.includes("<h1>") && 
+                                 userCode.includes("Hello ReactQuest!") && 
+                                 userCode.includes("</h1>");
+                    } else if (level.id === 3) {
+                        correct = userCode.includes("props") && 
+                                 userCode.includes("{props.name}") && 
+                                 userCode.includes("Welcome,");
+                    } else if (level.id === 4) {
+                        correct = userCode.includes("{ name }") && 
+                                 userCode.includes("{name}") && 
+                                 !userCode.includes("props.name");
+                    } else if (level.id === 5) {
+                        correct = userCode.includes("{ name, age }") && 
+                                 userCode.includes("{name}") && 
+                                 userCode.includes("{age}");
+                    }
+                    
                     if (correct) {
-                        setFeedback('🎉 Correct! Well done!');
+                        setFeedback(`🎉 Amazing! You earned ${level.points} XP!`);
                         setIsCorrect(true);
-                        setCompletedLevels(prev => new Set([...prev, currentLevel]));
+                        if (!completedLevels.has(currentLevel)) {
+                            setCompletedLevels(prev => new Set([...prev, currentLevel]));
+                            setTotalXP(prev => prev + level.points);
+                        }
                     } else {
-                        setFeedback('Not quite right. Try again!');
+                        setFeedback('Not quite right! Check the hint and try again. 🤔');
                         setIsCorrect(false);
                     }
                 } catch (error) {
-                    setFeedback(`Error: ${error.message}`);
+                    setFeedback(`Oops! There's a syntax error: ${error.message}`);
                     setIsCorrect(false);
                 }
             };
@@ -357,42 +610,60 @@
                 }
             };
 
-            const renderPreview = () => {
-                try {
-                    if (level.id <= 2) {
-                        // For React.createElement and JSX levels
-                        return (
-                            <div className="react-component">
-                                <div>Preview will show when code is correct</div>
-                            </div>
-                        );
-                    } else {
-                        // For component levels
-                        return (
-                            <div className="react-component">
-                                <div>Component Preview</div>
-                            </div>
-                        );
-                    }
-                } catch {
+            const runTutorial = () => {
+                setShowExample(false);
+                setTimeout(() => setShowExample(true), 100);
+            };
+
+            const renderVisualResult = () => {
+                if (!isCorrect) {
                     return (
-                        <div className="react-component">
-                            <div>Invalid code</div>
+                        <div className="target-component">
+                            <div style={{ color: '#999', textAlign: 'center' }}>
+                                <div>🎯 Your result will appear here</div>
+                                <div style={{ fontSize: '14px', marginTop: '10px' }}>
+                                    {level?.targetText || 'Complete the challenge above!'}
+                                </div>
+                            </div>
                         </div>
                     );
                 }
+
+                return (
+                    <div className="target-component success bounce-in">
+                        <div style={{ textAlign: 'center' }}>
+                            <div style={{ fontSize: '24px', color: '#4CAF50', marginBottom: '10px' }}>
+                                ✅ Perfect!
+                            </div>
+                            <div style={{ fontSize: '16px', color: '#333' }}>
+                                {level?.exampleResult || 'Success!'}
+                            </div>
+                        </div>
+                    </div>
+                );
             };
 
             return (
-                <div className="container">
+                <div className="game-container">
                     <div className="sidebar">
-                        <h1>ReactQuest</h1>
+                        <h1>🎯 ReactQuest</h1>
                         
+                        <div className="xp-display">
+                            XP: {totalXP}
+                        </div>
+                        
+                        <div className="progress-bar">
+                            <div 
+                                className="progress-fill" 
+                                style={{ width: `${progress}%` }}
+                            ></div>
+                        </div>
+
                         <div className="level-selector">
                             {levels.map(lvl => (
                                 <button
                                     key={lvl.id}
-                                    className={`level-btn ${
+                                    className={`level-btn game-element ${
                                         currentLevel === lvl.id ? 'current' : 
                                         completedLevels.has(lvl.id) ? 'completed' : ''
                                     }`}
@@ -404,63 +675,100 @@
                         </div>
 
                         <div className="objective">
-                            <h3>Objective</h3>
+                            <h3>🎯 Mission</h3>
                             <p>{level?.objective}</p>
                         </div>
 
-                        <div className="instructions">
-                            <h3>Instructions</h3>
-                            <p>{level?.instructions}</p>
-                        </div>
-
-                        {showHint && (
-                            <div className="hint-box">
-                                <h3>💡 Hint</h3>
-                                <p>{level?.hint}</p>
+                        {showTutorial && (
+                            <div className="tutorial-box">
+                                <h3>Tutorial</h3>
+                                <p>{level?.tutorial}</p>
+                                
+                                <div className="example-code">
+                                    {level?.exampleCode}
+                                </div>
+                                
+                                <div className={`visual-demo ${showExample ? 'animated' : ''}`}>
+                                    {level?.exampleResult}
+                                </div>
+                                
+                                <button 
+                                    className="btn" 
+                                    onClick={runTutorial}
+                                    style={{ fontSize: '12px', padding: '8px 16px' }}
+                                >
+                                    🔄 Run Example
+                                </button>
                             </div>
                         )}
 
                         <button 
                             className="btn" 
-                            onClick={() => setShowHint(!showHint)}
+                            onClick={() => setShowTutorial(!showTutorial)}
                         >
-                            {showHint ? 'Hide Hint' : 'Show Hint'}
+                            {showTutorial ? '📚 Hide Tutorial' : '📚 Show Tutorial'}
                         </button>
                     </div>
 
-                    <div className="main-content">
+                    <div className="main-game-area">
                         <div className="level-header">
                             <h2>Level {currentLevel}: {level?.title}</h2>
                         </div>
 
-                        <div className="challenge-area">
+                        <div className="game-board">
                             <div className="code-section">
-                                <h3>Your Code</h3>
+                                <h3>🔧 Your Code</h3>
+                                <p style={{ marginBottom: '10px', color: '#666' }}>
+                                    {level?.instructions}
+                                </p>
+                                
                                 <textarea
                                     className="code-input"
                                     value={userCode}
                                     onChange={(e) => setUserCode(e.target.value)}
-                                    placeholder="Write your React code here..."
+                                    placeholder={level?.placeholder}
                                 />
-                                <button className="btn" onClick={checkCode}>
-                                    Check Answer
-                                </button>
-                                {isCorrect && currentLevel < levels.length && (
-                                    <button className="btn next-btn" onClick={nextLevel}>
-                                        Next Level →
+                                
+                                <div>
+                                    <button className="btn" onClick={checkCode}>
+                                        🚀 Test My Code
                                     </button>
-                                )}
+                                    {isCorrect && currentLevel < levels.length && (
+                                        <button className="btn next-btn" onClick={nextLevel}>
+                                            Next Level →
+                                        </button>
+                                    )}
+                                </div>
                                 
                                 {feedback && (
                                     <div className={isCorrect ? 'success' : 'error'}>
                                         {feedback}
                                     </div>
                                 )}
+
+                                {!isCorrect && (
+                                    <div className="tutorial-box" style={{ marginTop: '15px' }}>
+                                        <h3>💡 Hint</h3>
+                                        <p>{level?.hint}</p>
+                                    </div>
+                                )}
                             </div>
 
-                            <div className="preview-section">
-                                <h3>Preview</h3>
-                                {renderPreview()}
+                            <div className="visual-section">
+                                <h3>🖥️ Browser Preview</h3>
+                                <div className="browser-window">
+                                    <div className="browser-header">
+                                        <div className="browser-dot dot-red"></div>
+                                        <div className="browser-dot dot-yellow"></div>
+                                        <div className="browser-dot dot-green"></div>
+                                        <span style={{ marginLeft: '10px', fontSize: '12px', color: '#666' }}>
+                                            ReactQuest Playground
+                                        </span>
+                                    </div>
+                                    <div className="browser-content">
+                                        {renderVisualResult()}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
