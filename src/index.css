@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+      monospace;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-react-blue text-react-dark px-6 py-3 rounded-lg font-semibold text-lg
+           hover:bg-blue-400 transition-all duration-200 transform hover:scale-105
+           focus:outline-none focus:ring-4 focus:ring-blue-300;
+  }
+
+  .btn-secondary {
+    @apply bg-gray-600 text-white px-4 py-2 rounded-lg font-medium
+           hover:bg-gray-700 transition-all duration-200
+           focus:outline-none focus:ring-4 focus:ring-gray-300;
+  }
+
+  .card {
+    @apply bg-white rounded-xl shadow-lg border border-gray-200 p-6;
+  }
+
+  .code-block {
+    @apply bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm
+           border border-gray-700;
+  }
+}
+
+/* Monaco Editor Overrides */
+.monaco-editor {
+  border-radius: 0.5rem !important;
+}
+
+/* Custom animations */
+@keyframes typewriter {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.typewriter {
+  animation: typewriter 3s steps(40, end);
+  overflow: hidden;
+  white-space: nowrap;
+} 
